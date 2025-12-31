@@ -1,0 +1,24 @@
+<!--index.wxml-->
+<view class="container">
+  <view class="header">
+    <text class="title">我的绘图</text>
+    <button class="create-btn" bindtap="createNewDrawing">新建绘图</button>
+  </view>
+
+  <scroll-view class="drawings-list" scroll-y>
+    <view class="drawing-item" wx:for="{{drawings}}" wx:key="id" data-id="{{item.id}}">
+      <view class="drawing-info" bindtap="openDrawing">
+        <text class="drawing-name">{{item.name || '未命名绘图'}}</text>
+        <text class="drawing-time">{{item.time}}</text>
+      </view>
+      <view class="drawing-actions">
+        <button class="action-btn" size="mini" bindtap="shareDrawing" data-id="{{item.id}}">分享</button>
+        <button class="action-btn delete-btn" size="mini" bindtap="deleteDrawing" data-id="{{item.id}}">删除</button>
+      </view>
+    </view>
+    <view class="empty" wx:if="{{drawings.length === 0}}">
+      <text>还没有绘图，点击"新建绘图"开始吧</text>
+    </view>
+  </scroll-view>
+</view>
+

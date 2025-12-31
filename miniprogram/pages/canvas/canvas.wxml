@@ -1,0 +1,33 @@
+<!--canvas.wxml-->
+<view class="container">
+  <view class="toolbar">
+    <button class="tool-btn" bindtap="saveDrawing">保存</button>
+    <button class="tool-btn" bindtap="exportDrawing">导出</button>
+    <button class="tool-btn" bindtap="clearCanvas">清空</button>
+  </view>
+
+  <canvas 
+    class="canvas"
+    canvas-id="{{canvasId}}"
+    bindtouchstart="touchStart"
+    bindtouchmove="touchMove"
+    bindtouchend="touchEnd"
+    disable-scroll="true"
+  ></canvas>
+
+  <view class="tools-panel">
+    <view class="tool-item" data-tool="pen" bindtap="selectTool">
+      <text>画笔</text>
+    </view>
+    <view class="tool-item" data-tool="rectangle" bindtap="selectTool">
+      <text>矩形</text>
+    </view>
+    <view class="tool-item" data-tool="ellipse" bindtap="selectTool">
+      <text>圆形</text>
+    </view>
+    <view class="tool-item" data-tool="text" bindtap="selectTool">
+      <text>文字</text>
+    </view>
+  </view>
+</view>
+
