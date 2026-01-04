@@ -1,53 +1,341 @@
 /**canvas.wxss**/
 .container {
-  height: 100vh;
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   background-color: #f5f5f5;
+  position: relative;
+  overflow: hidden;
 }
 
+/* 语言切换按钮 */
+.lang-switch-btn {
+  position: fixed;
+  top: 20rpx;
+  right: 20rpx;
+  z-index: 1001;
+  padding: 12rpx 24rpx;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 8rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+}
+
+.lang-text {
+  font-size: 24rpx;
+  color: #333;
+  font-weight: 500;
+}
+
+/* 横向工具栏 */
 .toolbar {
   display: flex;
-  justify-content: space-around;
   align-items: center;
-  padding: 20rpx;
+  padding: 15rpx 20rpx;
   background-color: #fff;
   border-bottom: 1rpx solid #e0e0e0;
+  z-index: 999;
+  position: relative;
+  flex-shrink: 0;
+  gap: 15rpx;
+  overflow: visible;
+  transition: all 0.3s ease;
+  min-height: 86rpx;
 }
 
-.tool-btn {
+.toolbar.collapsed {
+  min-height: 86rpx;
+}
+
+.toolbar.expanded {
+  min-height: 86rpx;
+}
+
+.toolbar-section {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+  flex-shrink: 0;
+}
+
+.toolbar-section:first-child {
+  flex-shrink: 0;
+}
+
+.toolbar-section:last-child {
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.tools-section {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+}
+
+.current-tool-display {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+  flex: 1;
+}
+
+.expand-btn {
+  flex-shrink: 0;
+}
+
+.tools-scroll {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+}
+
+.tool-btn-icon {
+  width: 56rpx;
+  height: 56rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f0f0f0;
+  border-radius: 8rpx;
+  font-size: 28rpx;
+  flex-shrink: 0;
+}
+
+.tool-btn-icon:active {
+  background-color: #e0e0e0;
+}
+
+.icon {
+  font-size: 28rpx;
+}
+
+/* 画布容器 */
+.canvas-wrapper {
+  flex: 1;
+  width: 100%;
+  position: relative;
+  background-color: #fff;
+  touch-action: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  z-index: 1;
+  overflow: hidden;
+  min-height: 400rpx;
+  height: 0; /* 配合 flex: 1 使用 */
+}
+
+/* 画布 */
+.canvas {
+  width: 100%;
+  height: 100%;
+  background-color: #fff;
+  touch-action: none;
+  pointer-events: none;
+}
+
+/* 文字输入框遮罩 */
+.text-input-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9998;
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+/* 文字输入框 */
+.text-input-container {
+  position: fixed;
+  z-index: 9999;
+  background-color: #fff;
+  border: 2rpx solid #4a90e2;
+  border-radius: 8rpx;
+  padding: 20rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.15);
+  transform: translate(-50%, -50%);
+  min-width: 300rpx;
+  max-width: 500rpx;
+}
+
+.text-input {
+  width: 100%;
+  min-width: 300rpx;
+  min-height: 60rpx;
+  max-height: 200rpx;
+  padding: 15rpx;
+  font-size: 28rpx;
+  border: 1rpx solid #e0e0e0;
+  border-radius: 4rpx;
+  outline: none;
+  margin-bottom: 10rpx;
+  line-height: 1.5;
+  box-sizing: border-box;
+}
+
+.text-input-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10rpx;
+  margin-top: 10rpx;
+}
+
+.text-input-btn {
+  padding: 10rpx 20rpx;
+  font-size: 24rpx;
+  border-radius: 4rpx;
   background-color: #4a90e2;
   color: #fff;
   border: none;
-  border-radius: 8rpx;
-  padding: 15rpx 30rpx;
-  font-size: 26rpx;
 }
 
-.canvas {
-  flex: 1;
-  width: 100%;
+.text-input-btn.cancel-btn {
+  background-color: #999;
+}
+
+/* 颜色选择器 */
+.color-picker {
+  position: absolute;
+  bottom: 200rpx;
+  left: 50%;
+  transform: translateX(-50%);
   background-color: #fff;
+  border-radius: 12rpx;
+  padding: 30rpx;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.2);
+  z-index: 999;
 }
 
-.tools-panel {
+.color-picker-title {
+  font-size: 28rpx;
+  font-weight: bold;
+  margin-bottom: 20rpx;
+  text-align: center;
+}
+
+.color-grid {
   display: flex;
-  justify-content: space-around;
-  align-items: center;
-  padding: 20rpx;
+  flex-wrap: wrap;
+  gap: 15rpx;
+  width: 400rpx;
+}
+
+.color-item {
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 8rpx;
+  border: 3rpx solid transparent;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+}
+
+.color-item.active {
+  border-color: #4a90e2;
+  box-shadow: 0 0 0 3rpx rgba(74, 144, 226, 0.3);
+}
+
+/* 画笔粗细选择器 */
+.stroke-width-picker {
+  position: absolute;
+  bottom: 200rpx;
+  left: 50%;
+  transform: translateX(-50%);
   background-color: #fff;
-  border-top: 1rpx solid #e0e0e0;
+  border-radius: 12rpx;
+  padding: 30rpx;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.2);
+  z-index: 999;
+}
+
+.stroke-width-picker-title {
+  font-size: 28rpx;
+  font-weight: bold;
+  margin-bottom: 20rpx;
+  text-align: center;
+}
+
+.stroke-width-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15rpx;
+  width: 300rpx;
+}
+
+.stroke-width-item {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  padding: 15rpx;
+  border-radius: 8rpx;
+  background-color: #f0f0f0;
+}
+
+.stroke-width-item.active {
+  background-color: #4a90e2;
+  color: #fff;
+}
+
+.stroke-width-line {
+  background-color: #333;
+  border-radius: 50%;
+}
+
+.stroke-width-item.active .stroke-width-line {
+  background-color: #fff;
 }
 
 .tool-item {
-  padding: 20rpx 40rpx;
+  padding: 12rpx 24rpx;
   background-color: #f0f0f0;
   border-radius: 8rpx;
-  font-size: 26rpx;
+  font-size: 24rpx;
   color: #333;
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-right: 10rpx;
 }
 
 .tool-item:active {
   background-color: #e0e0e0;
 }
 
+.tool-item.active {
+  background-color: #4a90e2;
+  color: #fff;
+}
+
+.property-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48rpx;
+  height: 48rpx;
+  flex-shrink: 0;
+}
+
+.color-preview {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 50%;
+  border: 2rpx solid #e0e0e0;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+}
+
+.stroke-width-preview {
+  width: 48rpx;
+  height: 4rpx;
+  background-color: #333;
+  border-radius: 2rpx;
+}
+
+.fill-preview {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 8rpx;
+  border: 2rpx solid #e0e0e0;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+}

@@ -1,23 +1,38 @@
 <!--index.wxml-->
 <view class="container">
   <view class="header">
-    <text class="title">我的绘图</text>
-    <button class="create-btn" bindtap="createNewDrawing">新建绘图</button>
+    <view class="title-section">
+      <text class="title">{{texts.myDrawings || '我的绘图'}}</text>
+      <view class="status-indicator">
+        <view class="status-dot-wrapper">
+          <view class="status-dot {{backendConnected ? 'connected' : 'disconnected'}}"></view>
+        </view>
+      </view>
+    </view>
+    <view class="header-actions">
+      <view class="lang-switch" bindtap="switchLanguage">
+        <text class="lang-text">{{language === 'zh-CN' ? 'EN' : '中文'}}</text>
+      </view>
+      <button class="create-btn" bindtap="createNewDrawing">{{texts.newDrawing || '新建绘图'}}</button>
+    </view>
   </view>
 
   <scroll-view class="drawings-list" scroll-y>
     <view class="drawing-item" wx:for="{{drawings}}" wx:key="id" data-id="{{item.id}}">
       <view class="drawing-info" bindtap="openDrawing">
-        <text class="drawing-name">{{item.name || '未命名绘图'}}</text>
+        <text class="drawing-name">{{item.name || (texts.untitled || '未命名绘图')}}</text>
         <text class="drawing-time">{{item.time}}</text>
       </view>
       <view class="drawing-actions">
-        <button class="action-btn" size="mini" bindtap="shareDrawing" data-id="{{item.id}}">分享</button>
-        <button class="action-btn delete-btn" size="mini" bindtap="deleteDrawing" data-id="{{item.id}}">删除</button>
+        <button class="action-btn" size="mini" bindtap="shareDrawing" data-id="{{item.id}}">{{texts.share || '分享'}}</button>
+        <button class="action-btn delete-btn" size="mini" bindtap="deleteDrawing" data-id="{{item.id}}">{{texts.delete || '删除'}}</button>
       </view>
     </view>
-    <view class="empty" wx:if="{{drawings.length === 0}}">
-      <text>还没有绘图，点击"新建绘图"开始吧</text>
+    <view class="empty" wx:if="{{drawings.length === 0 && !loading}}">
+      <text>{{texts.noDrawings || '还没有绘图，点击"新建绘图"开始吧'}}</text>
+    </view>
+    <view class="loading" wx:if="{{loading}}">
+      <text>{{texts.loading || '加载中...'}}</text>
     </view>
   </scroll-view>
 </view>

@@ -1,33 +1,159 @@
 <!--canvas.wxml-->
 <view class="container">
-  <view class="toolbar">
-    <button class="tool-btn" bindtap="saveDrawing">保存</button>
-    <button class="tool-btn" bindtap="exportDrawing">导出</button>
-    <button class="tool-btn" bindtap="clearCanvas">清空</button>
+  <!-- 语言切换按钮 -->
+  <view class="lang-switch-btn" bindtap="switchLanguage">
+    <text class="lang-text">{{language === 'zh-CN' ? 'EN' : '中文'}}</text>
   </view>
 
+  <!-- 横向工具栏 -->
+  <view class="toolbar {{toolbarExpanded ? 'expanded' : 'collapsed'}}">
+    <!-- 左侧：撤销/重做 -->
+    <view class="toolbar-section">
+      <view class="tool-btn-icon" bindtap="undo">
+        <text class="icon">↶</text>
+      </view>
+      <view class="tool-btn-icon" bindtap="redo">
+        <text class="icon">↷</text>
+      </view>
+    </view>
+    
+    <!-- 中间：当前工具（收起时）或所有工具（展开时） -->
+    <view class="toolbar-section tools-section">
+      <!-- 收起状态：只显示当前工具和展开按钮 -->
+      <view class="current-tool-display" wx:if="{{!toolbarExpanded}}">
+        <view class="tool-item active" bindtap="toggleToolbar">
+          <text>{{toolNames[currentTool] || '画笔'}}</text>
+        </view>
+        <view class="tool-btn-icon expand-btn" bindtap="toggleToolbar">
+          <text class="icon">▼</text>
+        </view>
+      </view>
+      
+      <!-- 展开状态：显示所有工具 -->
+      <scroll-view class="tools-scroll" scroll-x wx:if="{{toolbarExpanded}}">
+        <view class="tool-item {{currentTool === 'select' ? 'active' : ''}}" data-tool="select" bindtap="selectTool">
+          <text>选择</text>
+        </view>
+        <view class="tool-item {{currentTool === 'pen' ? 'active' : ''}}" data-tool="pen" bindtap="selectTool">
+          <text>画笔</text>
+        </view>
+        <view class="tool-item {{currentTool === 'rectangle' ? 'active' : ''}}" data-tool="rectangle" bindtap="selectTool">
+          <text>矩形</text>
+        </view>
+        <view class="tool-item {{currentTool === 'ellipse' ? 'active' : ''}}" data-tool="ellipse" bindtap="selectTool">
+          <text>圆形</text>
+        </view>
+        <view class="tool-item {{currentTool === 'diamond' ? 'active' : ''}}" data-tool="diamond" bindtap="selectTool">
+          <text>菱形</text>
+        </view>
+        <view class="tool-item {{currentTool === 'arrow' ? 'active' : ''}}" data-tool="arrow" bindtap="selectTool">
+          <text>箭头</text>
+        </view>
+        <view class="tool-item {{currentTool === 'line' ? 'active' : ''}}" data-tool="line" bindtap="selectTool">
+          <text>直线</text>
+        </view>
+        <view class="tool-item {{currentTool === 'text' ? 'active' : ''}}" data-tool="text" bindtap="selectTool">
+          <text>文字</text>
+        </view>
+        <view class="tool-item {{currentTool === 'eraser' ? 'active' : ''}}" data-tool="eraser" bindtap="selectTool">
+          <text>橡皮</text>
+        </view>
+      </scroll-view>
+    </view>
+    
+    <!-- 右侧：属性设置和操作 -->
+    <view class="toolbar-section toolbar-right">
+      <view class="property-item" bindtap="showColorPicker">
+        <view class="color-preview" style="background-color: {{appState.currentItemStrokeColor}}"></view>
+      </view>
+      <view class="property-item" bindtap="showStrokeWidthPicker">
+        <view class="stroke-width-preview" style="width: {{appState.currentItemStrokeWidth * 2}}rpx;"></view>
+      </view>
+      <view class="property-item" bindtap="toggleFill">
+        <view class="fill-preview" style="background-color: {{appState.currentItemBackgroundColor === 'transparent' ? '#f0f0f0' : appState.currentItemBackgroundColor}}"></view>
+      </view>
+      <view class="tool-btn-icon" bindtap="saveDrawing">
+        <text class="icon">💾</text>
+      </view>
+      <view class="tool-btn-icon" bindtap="exportDrawing">
+        <text class="icon">📤</text>
+      </view>
+      <view class="tool-btn-icon" wx:if="{{selectedElementId}}" bindtap="deleteSelected">
+        <text class="icon">🗑</text>
+      </view>
+      <view class="tool-btn-icon" bindtap="clearCanvas">
+        <text class="icon">🗑</text>
+      </view>
+      <view class="tool-btn-icon collapse-btn" wx:if="{{toolbarExpanded}}" bindtap="toggleToolbar">
+        <text class="icon">▲</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 画布 -->
+  <view class="canvas-wrapper" catchtouchstart="{{!showTextInput ? 'touchStart' : ''}}" catchtouchmove="{{!showTextInput ? 'touchMove' : ''}}" catchtouchend="{{!showTextInput ? 'touchEnd' : ''}}">
   <canvas 
     class="canvas"
     canvas-id="{{canvasId}}"
-    bindtouchstart="touchStart"
-    bindtouchmove="touchMove"
-    bindtouchend="touchEnd"
     disable-scroll="true"
+      style="width: 100%; height: 100%;"
   ></canvas>
+  </view>
 
-  <view class="tools-panel">
-    <view class="tool-item" data-tool="pen" bindtap="selectTool">
-      <text>画笔</text>
-    </view>
-    <view class="tool-item" data-tool="rectangle" bindtap="selectTool">
-      <text>矩形</text>
-    </view>
-    <view class="tool-item" data-tool="ellipse" bindtap="selectTool">
-      <text>圆形</text>
-    </view>
-    <view class="tool-item" data-tool="text" bindtap="selectTool">
-      <text>文字</text>
+  <!-- 文字输入框遮罩 -->
+  <view class="text-input-mask" wx:if="{{showTextInput}}" catchtap="onTextInputCancel"></view>
+  <!-- 文字输入框 -->
+  <view class="text-input-container" wx:if="{{showTextInput}}" style="left: {{textInputX}}px; top: {{textInputY}}px;">
+    <textarea 
+      class="text-input"
+      placeholder="{{texts.inputText || '输入文字'}}"
+      value="{{textInputValue}}"
+      bindconfirm="onTextInputConfirm"
+      bindblur="onTextInputBlur"
+      bindinput="onTextInput"
+      focus="{{showTextInput}}"
+      maxlength="50"
+      auto-focus="{{true}}"
+      auto-height="{{true}}"
+      hold-keyboard="{{true}}"
+      bindfocus="onTextInputFocus"
+    ></textarea>
+    <view class="text-input-actions">
+      <button class="text-input-btn confirm-btn" size="mini" bindtap="confirmTextInput">{{texts.confirm || '确定'}}</button>
+      <button class="text-input-btn cancel-btn" size="mini" bindtap="onTextInputCancel">{{texts.cancel || '取消'}}</button>
     </view>
   </view>
-</view>
 
+  <!-- 颜色选择器 -->
+  <view class="color-picker" wx:if="{{showColorPicker}}">
+    <view class="color-picker-title">{{texts.selectColor || '选择颜色'}}</view>
+    <view class="color-grid">
+      <view 
+        class="color-item {{appState.currentItemStrokeColor === color ? 'active' : ''}}"
+        wx:for="{{presetColors}}"
+        wx:key="index"
+        style="background-color: {{item}}"
+        data-color="{{item}}"
+        bindtap="selectColor"
+      ></view>
+    </view>
+  </view>
+
+  <!-- 画笔粗细选择器 -->
+  <view class="stroke-width-picker" wx:if="{{showStrokeWidthPicker}}">
+    <view class="stroke-width-picker-title">{{texts.selectWidth || '选择粗细'}}</view>
+    <view class="stroke-width-list">
+      <view 
+        class="stroke-width-item {{appState.currentItemStrokeWidth === item ? 'active' : ''}}"
+        wx:for="{{strokeWidths}}"
+        wx:key="index"
+        data-width="{{item}}"
+        bindtap="selectStrokeWidth"
+      >
+        <view class="stroke-width-line" style="width: {{item * 2}}rpx; height: {{item * 2}}rpx;"></view>
+        <text>{{item}}px</text>
+    </view>
+    </view>
+  </view>
+
+</view>

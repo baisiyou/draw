@@ -9,4 +9,6 @@ services:
         value: 10000
       - key: NODE_ENV
         value: production
+    # Render 会自动分配域名，格式为: https://excalidraw-backend.onrender.com
+    # 如果使用自定义域名，请在 Render 控制台配置
 

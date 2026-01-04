@@ -15,10 +15,90 @@
   border-bottom: 1rpx solid #e0e0e0;
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+}
+
+.lang-switch {
+  padding: 12rpx 24rpx;
+  background-color: #f0f0f0;
+  border-radius: 8rpx;
+  cursor: pointer;
+}
+
+.lang-text {
+  font-size: 24rpx;
+  color: #333;
+  font-weight: 500;
+}
+
+.title-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+}
+
 .title {
   font-size: 36rpx;
   font-weight: bold;
   color: #333;
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  margin-top: 8rpx;
+  padding: 4rpx 0;
+}
+
+.status-dot-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32rpx;
+  height: 32rpx;
+  flex-shrink: 0;
+}
+
+.status-dot {
+  width: 24rpx;
+  height: 24rpx;
+  min-width: 24rpx;
+  min-height: 24rpx;
+  border-radius: 50%;
+  background-color: #999999;
+  display: block;
+  border: 3rpx solid #ffffff;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.2);
+}
+
+.status-dot.connected {
+  background-color: #52c41a !important;
+  border-color: #52c41a !important;
+  box-shadow: 0 2rpx 12rpx rgba(82, 196, 26, 0.6) !important;
+}
+
+.status-dot.disconnected {
+  background-color: #ff4d4f !important;
+  border-color: #ff4d4f !important;
+  box-shadow: 0 2rpx 12rpx rgba(255, 77, 79, 0.6) !important;
+}
+
+.status-text {
+  font-size: 24rpx;
+  color: #666;
+  line-height: 1.2;
+  font-weight: 500;
+}
+
+.status-text.status-connected {
+  color: #52c41a;
+}
+
+.status-text.status-disconnected {
+  color: #ff4d4f;
 }
 
 .create-btn {
@@ -81,6 +161,13 @@
 .empty {
   text-align: center;
   padding: 200rpx 0;
+  color: #999;
+  font-size: 28rpx;
+}
+
+.loading {
+  text-align: center;
+  padding: 100rpx 0;
   color: #999;
   font-size: 28rpx;
 }

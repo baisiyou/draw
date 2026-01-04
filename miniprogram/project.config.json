@@ -1,7 +1,8 @@
 {
-  "description": "Excalidraw 微信小程序项目配置文件",
+  "description": "White Board 微信小程序项目配置文件",
   "packOptions": {
-    "ignore": []
+    "ignore": [],
+    "include": []
   },
   "setting": {
     "urlCheck": false,
@@ -39,12 +40,21 @@
     "disableUseStrict": false,
     "minifyWXML": true,
     "showES6CompileOption": false,
-    "useCompilerPlugins": false
+    "useCompilerPlugins": false,
+    "compileWorklet": false,
+    "localPlugins": false,
+    "condition": true,
+    "swc": false,
+    "disableSWC": true
   },
   "compileType": "miniprogram",
-  "libVersion": "2.19.4",
-  "appid": "your-appid",
-  "projectname": "excalidraw-miniprogram",
-  "condition": {}
+  "libVersion": "3.13.1",
+  "appid": "wx3179809c9c19702b",
+  "projectname": "whiteboard-miniprogram",
+  "condition": {},
+  "simulatorPluginLibVersion": {
+    "wxext14566970e7e9f62": "3.6.5-41"
+  },
+  "editorSetting": {},
+  "projectArchitecture": "multiPlatform"
 }
-
